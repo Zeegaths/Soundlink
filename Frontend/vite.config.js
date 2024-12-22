@@ -4,10 +4,10 @@ import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import viteCompression from "vite-plugin-compression";
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// More robust package.json reading
 let dependencies = {};
 try {
   const packageJson = JSON.parse(
@@ -38,6 +38,7 @@ function renderChunks(deps) {
 export default defineConfig({
   plugins: [
     react(),
+    nodePolyfills(),
     viteCompression({
       algorithm: "brotliCompress",
       filter: /\.(js|mjs|json|css|html|svg)$/i,
@@ -55,10 +56,16 @@ export default defineConfig({
         },
       },
     },
-    // Add these options to help with Vercel deployment
-    target: 'es2015',
+    target: ['esnext'], // Changed from 'es2015' to 'esnext'
     modulePreload: false,
     minify: 'terser',
+    terserOptions: {
+      ecma: 2020, // Add this to support modern JavaScript features
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
   resolve: {
     alias: {
@@ -69,6 +76,11 @@ export default defineConfig({
       Context: path.resolve(__dirname, "./src/context"),
       Routes: path.resolve(__dirname, "./src/routes"),
       Src: path.resolve(__dirname, "./src"),
+    },
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext', // Add this to support BigInt in dependencies
     },
   },
   server: {
