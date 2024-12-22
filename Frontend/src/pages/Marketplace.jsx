@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainAppWrapper from '../components/MainAppWrapper';
+import { useNavigate } from "react-router-dom";
 
 const MarketPlace = () => {
   const [cat, setCat] = useState("Afrobeats");
@@ -45,6 +46,11 @@ const MarketPlace = () => {
     // ... more albums
   ];
 
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate("/beat-upload");
+  };
+
   return (
     <MainAppWrapper>
       <div className="market-ctn px-4 sm:px-6 lg:px-8">
@@ -53,7 +59,7 @@ const MarketPlace = () => {
             <h4 className="text-xl sm:text-2xl font-bold">Marketplace</h4>
             <p className="mt-2 text-sm sm:text-base">Listings on the marketplace</p>
           </div>
-          <button className="market-ctn-btn bg-[#394661] text-white py-2 px-4 rounded-md border border-[#41557B] hover:bg-[#2e3a52]">
+          <button className="market-ctn-btn bg-[#394661] text-white py-2 px-4 rounded-md border border-[#41557B] hover:bg-[#2e3a52]" onClick={handleNavigate}>
             Create a listing
           </button>
         </div>

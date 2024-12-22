@@ -16,7 +16,7 @@ import { AuthKitProvider, SignInButton } from '@farcaster/auth-kit';
 import "@farcaster/auth-kit/styles.css";
 import RapBattles from './pages/RapBattles.jsx';
 import AddBattle from './pages/AddBattle.jsx';
-
+import BeatUploadForm from './pages/BeatUploadForm.jsx';
 // import { createConfig, WagmiProvider, configureChains } from 'wagmi';
 // import { publicProvider } from 'wagmi/providers/public';
 import { optimism } from 'wagmi/chains';
@@ -65,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: "/add-battle",
     element: <AddBattle />,
+  },
+  {
+    path: "/beat-upload",
+    element: <BeatUploadForm />,
   },
 ]);
 
