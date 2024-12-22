@@ -125,7 +125,7 @@ const ProfileSetup = ({ modalOpen, closeModal }) => {
                 </div>
                 <div className='mt-8'>
                 <button className='market-ctn-btn bg-[#394661] border border-[#41557B]'>
-                  Continue
+                  Create Profile
                 </button>
                 </div>
                     </div>
