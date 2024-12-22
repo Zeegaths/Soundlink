@@ -1,17 +1,22 @@
-
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-
 import viteCompression from "vite-plugin-compression";
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const { dependencies } = JSON.parse(
-  fs.readFileSync(path.join(dirname, "package.json"))
-);
+// More robust package.json reading
+let dependencies = {};
+try {
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "package.json"), 'utf-8')
+  );
+  dependencies = packageJson.dependencies || {};
+} catch (error) {
+  console.warn('Could not read package.json:', error);
+}
 
 const vendorPackages = [
   "react",
@@ -21,28 +26,25 @@ const vendorPackages = [
 ];
 
 function renderChunks(deps) {
-  let chunks = {};
+  const chunks = {};
   Object.keys(deps).forEach(key => {
-    if (vendorPackages.includes(key)) return;
-    chunks[key] = [key];
+    if (!vendorPackages.includes(key)) {
+      chunks[key] = [key];
+    }
   });
   return chunks;
 }
 
-export const OUTPUT_DIRECTORY = "dist";
-
-// https://vitejs.dev/config/
-export default defineConfig({  
+export default defineConfig({
   plugins: [
     react(),
-    
     viteCompression({
       algorithm: "brotliCompress",
-      filter: /.(js|mjs|json|css|html|svg)$/i,
+      filter: /\.(js|mjs|json|css|html|svg)$/i,
     }),
   ],
   build: {
-    outDir: OUTPUT_DIRECTORY,
+    outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
       external: ["fsevents"],
@@ -53,16 +55,20 @@ export default defineConfig({
         },
       },
     },
+    // Add these options to help with Vercel deployment
+    target: 'es2015',
+    modulePreload: false,
+    minify: 'terser',
   },
   resolve: {
     alias: {
-      Components: path.resolve(dirname, "./src/components"),
-      Pages: path.resolve(dirname, "./src/pages"),
-      Utils: path.resolve(dirname, "./src/utils"),
-      Assets: path.resolve(dirname, "./src/assets"),
-      Context: path.resolve(dirname, "./src/context"),
-      Routes: path.resolve(dirname, "./src/routes"),
-      Src: path.resolve(dirname, "./src"),
+      Components: path.resolve(__dirname, "./src/components"),
+      Pages: path.resolve(__dirname, "./src/pages"),
+      Utils: path.resolve(__dirname, "./src/utils"),
+      Assets: path.resolve(__dirname, "./src/assets"),
+      Context: path.resolve(__dirname, "./src/context"),
+      Routes: path.resolve(__dirname, "./src/routes"),
+      Src: path.resolve(__dirname, "./src"),
     },
   },
   server: {
