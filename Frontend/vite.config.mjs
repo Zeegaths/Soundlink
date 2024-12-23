@@ -38,7 +38,6 @@ function renderChunks(deps) {
 export default defineConfig({
   plugins: [
     react(),
-    nodePolyfills(),
     viteCompression({
       algorithm: "brotliCompress",
       filter: /\.(js|mjs|json|css|html|svg)$/i,
@@ -48,7 +47,6 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
-      external: ["fsevents"],
       output: {
         manualChunks: {
           vendor: vendorPackages,
@@ -56,11 +54,10 @@ export default defineConfig({
         },
       },
     },
-    target: ['esnext'], // Changed from 'es2015' to 'esnext'
-    modulePreload: false,
+    target: ['esnext'], // Add support for modern JS features
     minify: 'terser',
     terserOptions: {
-      ecma: 2020, // Add this to support modern JavaScript features
+      ecma: 2020,
       compress: {
         drop_console: true,
         drop_debugger: true,
@@ -79,8 +76,9 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
+    include: ["@emotion/react"], // Ensure Emotion is optimized
     esbuildOptions: {
-      target: 'esnext', // Add this to support BigInt in dependencies
+      target: 'esnext',
     },
   },
   server: {
